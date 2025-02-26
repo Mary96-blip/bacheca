@@ -20,6 +20,10 @@
         .message {
             border-bottom: 1px solid #ddd;
             padding: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         #messageInput {
@@ -50,23 +54,46 @@
     <div id="messages"></div>
 
     <script>
+        // Funzione per caricare i messaggi
         async function loadMessages() {
             let response = await fetch('/messages');
             let messages = await response.json();
-            document.getElementById("messages").innerHTML = messages.map(msg => `<div class="message">${msg}</div>`).join("");
+            document.getElementById("messages").innerHTML = messages.map(msg => `
+                <div class="message" id="message-${msg.id}">
+                    <span>${msg.text}</span>
+                    <button onclick="deleteMessage(${msg.id})">Cancella</button>
+                </div>
+            `).join("");
         }
 
+        // Funzione per inviare il messaggio
         async function sendMessage() {
             let input = document.getElementById("messageInput").value;
             if (!input.trim()) return;
 
+            // Chiedi all'utente di inserire il proprio nome (in futuro puoi anche gestirlo in modo più sicuro)
+            const username = prompt("Inserisci il tuo nome:");
+
             await fetch('/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: input })  // Usa "message" qui
+                body: JSON.stringify({ message: input, username: username })  // Usa "message" e "username"
             });
 
             document.getElementById("messageInput").value = "";
+            loadMessages();
+        }
+
+        // Funzione per eliminare un messaggio
+        async function deleteMessage(messageId) {
+            const username = prompt("Inserisci il tuo nome per confermare la cancellazione:");
+
+            await fetch(`/messages/${messageId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username })
+            });
+
             loadMessages();
         }
 
@@ -75,3 +102,4 @@
 
 </body>
 </html>
+
