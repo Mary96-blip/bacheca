@@ -71,7 +71,7 @@
             let input = document.getElementById("messageInput").value;
             if (!input.trim()) return;
 
-            // Chiedi all'utente di inserire il proprio nome (in futuro puoi anche gestirlo in modo più sicuro)
+            // Chiedi all'utente di inserire il proprio nome
             const username = prompt("Inserisci il tuo nome:");
 
             await fetch('/messages', {
@@ -88,13 +88,17 @@
         async function deleteMessage(messageId) {
             const username = prompt("Inserisci il tuo nome per confermare la cancellazione:");
 
-            await fetch(`/messages/${messageId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username })
-            });
-
-            loadMessages();
+            // Se l'utente è l'amministratore, invia la richiesta di eliminazione
+            if (username === "zoodiberlino") {
+                await fetch(`/messages/${messageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username })
+                });
+                loadMessages(); // Ricarica i messaggi
+            } else {
+                alert("Non hai i permessi per eliminare questo messaggio.");
+            }
         }
 
         loadMessages();
@@ -102,4 +106,3 @@
 
 </body>
 </html>
-
