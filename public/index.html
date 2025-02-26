@@ -28,19 +28,18 @@
 
         #messageInput {
             width: 100%;
-            max-width: 500px;  /* Impostare la larghezza massima su desktop */
+            max-width: 500px;
             margin-bottom: 10px;
         }
 
-        /* Media query per schermi più piccoli (come i telefoni) */
         @media (max-width: 600px) {
             #messageInput {
-                width: 80%;  /* Imposta la larghezza della textarea più piccola su dispositivi mobili */
+                width: 80%;
                 max-width: 80%;
             }
 
             #messages {
-                width: 90%; /* Larghezza della sezione dei messaggi più piccola su mobile */
+                width: 90%;
             }
         }
     </style>
@@ -54,51 +53,45 @@
     <div id="messages"></div>
 
     <script>
-        let currentUser = ""; // Simuliamo un utente (puoi cambiarlo dinamicamente per testare diversi utenti)
-        const adminUser = "admin"; // Nome dell'amministratore
+        // Simuliamo un database di messaggi
+        let messages = [];
+        const adminUser = "admin";
+        let currentUser = ""; // Simula un utente che inserisce il proprio nome
 
         // Funzione per caricare i messaggi
-        async function loadMessages() {
-            let response = await fetch('/messages');
-            let messages = await response.json();
-
-            document.getElementById("messages").innerHTML = messages.map(msg => `
-                <div class="message" id="message-${msg.id}">
+        function loadMessages() {
+            const messageContainer = document.getElementById("messages");
+            messageContainer.innerHTML = "";
+            messages.forEach((msg, index) => {
+                const messageElement = document.createElement("div");
+                messageElement.classList.add("message");
+                messageElement.innerHTML = `
                     <span>${msg.username}: ${msg.text}</span>
-                    ${(msg.username === currentUser || currentUser === adminUser) ? `<button onclick="deleteMessage(${msg.id})">Cancella</button>` : ''}
-                </div>
-            `).join("");
+                    ${(msg.username === currentUser || currentUser === adminUser) ? `<button onclick="deleteMessage(${index})">Cancella</button>` : ''}
+                `;
+                messageContainer.appendChild(messageElement);
+            });
         }
 
-        // Funzione per inviare il messaggio
+        // Funzione per inviare un messaggio
         async function sendMessage() {
-            let input = document.getElementById("messageInput").value;
+            const input = document.getElementById("messageInput").value;
             if (!input.trim()) return;
 
-            // Chiediamo all'utente di inserire il proprio nome (per simulare la sessione)
             if (!currentUser) {
                 currentUser = prompt("Inserisci il tuo nome:");
             }
 
-            await fetch('/messages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: input, username: currentUser })  // Usa "message" e "username"
-            });
-
+            messages.push({ username: currentUser, text: input });  // Aggiungi il messaggio all'array
             document.getElementById("messageInput").value = "";
             loadMessages();
         }
 
         // Funzione per eliminare un messaggio
-        async function deleteMessage(messageId) {
-            // Controllo se l'utente ha i permessi per eliminare il messaggio
-            let messageOwner = (await fetch(`/messages/${messageId}`)).json();  // Otteniamo i dettagli del messaggio
-            if (messageOwner.username === currentUser || currentUser === adminUser) {
-                await fetch(`/messages/${messageId}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                });
+        function deleteMessage(index) {
+            const msg = messages[index];
+            if (msg.username === currentUser || currentUser === adminUser) {
+                messages.splice(index, 1); // Rimuovi il messaggio dall'array
                 loadMessages(); // Ricarica i messaggi
             } else {
                 alert("Non hai i permessi per eliminare questo messaggio.");
