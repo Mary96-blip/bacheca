@@ -45,7 +45,31 @@
 </head>
 <body>
 
-    <script src="https://chatbolt.ai/widget/7381c614-0585-44bb-b248-fcfd2db5eaee.js"></script>
+
+    <form id="messageForm">
+  <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
+  <button type="submit">Invia</button>
+</form>
+
+<script>
+  document.getElementById("messageForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var message = document.getElementById("message").value;
+    var url = "https://script.google.com/macros/s/AKfycbz5H-uNMKJPFCLCb6cJEoJRt32ASR8QfKwykbkoAx2w2uQmPO-a3LrwnA8xGy1mUK19/exec"; // Incolla l'URL generato da Google Apps Script
+
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "message=" + encodeURIComponent(message)
+    })
+    .then(response => response.text())
+    .then(data => alert(data));
+
+    document.getElementById("message").value = "";
+  });
+</script>
+
+
     
     <h2>lasciami un msg</h2>
     <textarea id="messageInput" rows="4" cols="50" placeholder="Scrivimi xxx..."></textarea><br>
