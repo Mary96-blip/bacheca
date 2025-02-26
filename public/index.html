@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacheca Messaggi</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #messages { width: 50%; margin: auto; background: #f4f4f4; padding: 10px; }
+        .message { border-bottom: 1px solid #ddd; padding: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Bacheca Messaggi</h2>
+    <textarea id="messageInput" rows="4" cols="50" placeholder="Scrivi un messaggio..."></textarea><br>
+    <button onclick="sendMessage()">Invia</button>
+
+    <div id="messages"></div>
+
+    <script>
+        async function loadMessages() {
+            let response = await fetch('/messages');
+            let messages = await response.json();
+            document.getElementById("messages").innerHTML = messages.map(msg => `<div class="message">${msg}</div>`).join("");
+        }
+
+        async function sendMessage() {
+            let input = document.getElementById("messageInput").value;
+            if (!input.trim()) return;
+
+            await fetch('/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: input })
+            });
+
+            document.getElementById("messageInput").value = "";
+            loadMessages();
+        }
+
+        loadMessages();
+    </script>
+
+</body>
+</html>
