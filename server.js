@@ -1,25 +1,43 @@
+const fs = require('fs'); // Importa il modulo per leggere e scrivere file
 const express = require('express');
-const fs = require('fs');
 const app = express();
+const port = 3000;
 
-app.use(express.json());
-app.use(express.static('public'));
+app.use(express.json()); // Permette di leggere il corpo delle richieste in formato JSON
+app.use(express.static('public')); // Serve la cartella 'public' per il sito
 
-const messagesFile = 'messages.json';
-let messages = fs.existsSync(messagesFile) ? JSON.parse(fs.readFileSync(messagesFile)) : [];
-
+// Percorso per ottenere i messaggi
 app.get('/messages', (req, res) => {
-    res.json(messages);
+    fs.readFile('messages.json', 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Errore nella lettura dei messaggi');
+        }
+        res.send(JSON.parse(data)); // Invia i messaggi in formato JSON
+    });
 });
 
+// Percorso per aggiungere un messaggio
 app.post('/messages', (req, res) => {
-    const message = req.body.text;
-    if (!message.trim()) return res.status(400).send('Messaggio vuoto');
+    const newMessage = req.body.message;
 
-    messages.push(message);
-    fs.writeFileSync(messagesFile, JSON.stringify(messages, null, 2));
+    fs.readFile('messages.json', 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Errore nella lettura dei messaggi');
+        }
 
-    res.json({ success: true });
+        const messages = JSON.parse(data);
+        messages.push(newMessage);
+
+        fs.writeFile('messages.json', JSON.stringify(messages, null, 2), (err) => {
+            if (err) {
+                return res.status(500).send('Errore nel salvataggio del messaggio');
+            }
+            res.status(200).send('Messaggio aggiunto con successo');
+        });
+    });
 });
 
-app.listen(3000, () => console.log('Server in ascolto su http://localhost:3000'));
+// Avvia il server
+app.listen(port, () => {
+    console.log(`Server in ascolto su http://localhost:${port}`);
+});
