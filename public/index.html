@@ -89,7 +89,7 @@
             const username = prompt("Inserisci il tuo nome per confermare la cancellazione:");
 
             // Se l'utente è l'amministratore, invia la richiesta di eliminazione
-            if (username === "zoodiberlino") {
+            if (username === "admin") {
                 await fetch(`/messages/${messageId}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
@@ -106,3 +106,4 @@
 
 </body>
 </html>
+
