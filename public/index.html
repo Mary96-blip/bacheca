@@ -54,14 +54,18 @@
     <div id="messages"></div>
 
     <script>
+        let currentUser = ""; // Simuliamo un utente (puoi cambiarlo dinamicamente per testare diversi utenti)
+        const adminUser = "admin"; // Nome dell'amministratore
+
         // Funzione per caricare i messaggi
         async function loadMessages() {
             let response = await fetch('/messages');
             let messages = await response.json();
+
             document.getElementById("messages").innerHTML = messages.map(msg => `
                 <div class="message" id="message-${msg.id}">
-                    <span>${msg.text}</span>
-                    ${msg.username === sessionStorage.getItem('user') || sessionStorage.getItem('user') === 'admin' ? `<button onclick="deleteMessage(${msg.id})">Cancella</button>` : ''}
+                    <span>${msg.username}: ${msg.text}</span>
+                    ${(msg.username === currentUser || currentUser === adminUser) ? `<button onclick="deleteMessage(${msg.id})">Cancella</button>` : ''}
                 </div>
             `).join("");
         }
@@ -71,14 +75,15 @@
             let input = document.getElementById("messageInput").value;
             if (!input.trim()) return;
 
-            // Chiedi all'utente di inserire il proprio nome
-            const username = prompt("Inserisci il tuo nome:");
-            sessionStorage.setItem('user', username);  // Salviamo l'utente nel sessionStorage
+            // Chiediamo all'utente di inserire il proprio nome (per simulare la sessione)
+            if (!currentUser) {
+                currentUser = prompt("Inserisci il tuo nome:");
+            }
 
             await fetch('/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: input, username: username })  // Usa "message" e "username"
+                body: JSON.stringify({ message: input, username: currentUser })  // Usa "message" e "username"
             });
 
             document.getElementById("messageInput").value = "";
@@ -87,15 +92,12 @@
 
         // Funzione per eliminare un messaggio
         async function deleteMessage(messageId) {
-            const username = prompt("Inserisci il tuo nome per confermare la cancellazione:");
-
-            // Se l'utente è l'amministratore o ha scritto il messaggio, invia la richiesta di eliminazione
-            let user = sessionStorage.getItem('user');
-            if (username === user || user === "admin") {
+            // Controllo se l'utente ha i permessi per eliminare il messaggio
+            let messageOwner = (await fetch(`/messages/${messageId}`)).json();  // Otteniamo i dettagli del messaggio
+            if (messageOwner.username === currentUser || currentUser === adminUser) {
                 await fetch(`/messages/${messageId}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username })
                 });
                 loadMessages(); // Ricarica i messaggi
             } else {
