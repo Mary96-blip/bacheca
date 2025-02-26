@@ -47,6 +47,63 @@
 
 
 
+
+
+    <!DOCTYPE html>
+<html>
+<head>
+    <title>Messaggi Segreti</title>
+    <style>
+        textarea { width: 100%; height: 100px; }
+        button { margin-top: 10px; }
+        #messages { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h2>Lascia un messaggio</h2>
+    <form id="messageForm">
+        <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
+        <button type="submit">Invia</button>
+    </form>
+
+    <h3>Messaggi ricevuti:</h3>
+    <div id="messages">Caricamento...</div>
+
+    <script>
+        const API_URL = "https://api.jsonbin.io/v3/b/67bf288fe41b4d34e49d0b2c";  // Sostituisci con il tuo JSONBin URL
+
+        async function loadMessages() {
+            let response = await fetch(API_URL);
+            let data = await response.json();
+            document.getElementById("messages").innerHTML = data.messages.map(m => `<p>${m}</p>`).join("");
+        }
+
+        document.getElementById("messageForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            let message = document.getElementById("message").value;
+
+            // Recupera i messaggi esistenti
+            let response = await fetch(API_URL);
+            let data = await response.json();
+            data.messages.push(message);
+
+            // Aggiorna il JSONBin con il nuovo messaggio
+            await fetch(API_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            document.getElementById("message").value = "";
+            loadMessages();
+        });
+
+        // Carica i messaggi al caricamento della pagina
+        loadMessages();
+    </script>
+</body>
+</html>
+
    <form id="messageForm">
   <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
   <button type="submit">Invia</button>
