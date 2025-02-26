@@ -5,9 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bacheca Messaggi - lasciami un msg</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #messages { width: 20%; margin: auto; background: #f4f4f4; padding: 10px; }
-        .message { border-bottom: 1px solid #ddd; padding: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #messages {
+            width: 50%;
+            margin: auto;
+            background: #f4f4f4;
+            padding: 10px;
+        }
+
+        .message {
+            border-bottom: 1px solid #ddd;
+            padding: 5px;
+        }
+
+        #messageInput {
+            width: 100%;
+            max-width: 500px;  /* Impostare la larghezza massima su desktop */
+            margin-bottom: 10px;
+        }
+
+        /* Media query per schermi più piccoli (come i telefoni) */
+        @media (max-width: 600px) {
+            #messageInput {
+                width: 80%;  /* Imposta la larghezza della textarea più piccola su dispositivi mobili */
+                max-width: 80%;
+            }
+
+            #messages {
+                width: 90%; /* Larghezza della sezione dei messaggi più piccola su mobile */
+            }
+        }
     </style>
 </head>
 <body>
