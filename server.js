@@ -19,6 +19,7 @@ app.get('/messages', (req, res) => {
 // Percorso per aggiungere un messaggio
 app.post('/messages', (req, res) => {
     const newMessage = req.body.message;
+    const username = req.body.username; // Aggiungi il nome dell'utente
 
     fs.readFile('messages.json', 'utf8', (err, data) => {
         if (err) {
@@ -26,7 +27,8 @@ app.post('/messages', (req, res) => {
         }
 
         const messages = JSON.parse(data);
-        messages.push(newMessage);
+        const messageId = new Date().getTime(); // Usa timestamp come ID univoco
+        messages.push({ id: messageId, username, text: newMessage });
 
         fs.writeFile('messages.json', JSON.stringify(messages, null, 2), (err) => {
             if (err) {
@@ -37,8 +39,37 @@ app.post('/messages', (req, res) => {
     });
 });
 
+// Percorso per cancellare un messaggio
+app.delete('/messages/:id', (req, res) => {
+    const messageId = parseInt(req.params.id); // Ottieni l'ID del messaggio da cancellare
+    const username = req.body.username; // L'utente deve inviare il proprio nome
+
+    fs.readFile('messages.json', 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Errore nella lettura dei messaggi');
+        }
+
+        let messages = JSON.parse(data);
+        const messageIndex = messages.findIndex(msg => msg.id === messageId && msg.username === username);
+
+        if (messageIndex === -1) {
+            return res.status(403).send('Non puoi cancellare un messaggio che non hai scritto');
+        }
+
+        messages.splice(messageIndex, 1); // Rimuovi il messaggio
+
+        fs.writeFile('messages.json', JSON.stringify(messages, null, 2), (err) => {
+            if (err) {
+                return res.status(500).send('Errore nel salvataggio dei messaggi');
+            }
+            res.status(200).send('Messaggio cancellato con successo');
+        });
+    });
+});
+
 // Avvia il server
 app.listen(port, () => {
     console.log(`Server in ascolto su http://localhost:${port}`);
 });
+
 
