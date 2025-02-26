@@ -73,3 +73,31 @@ app.listen(port, () => {
 });
 
 
+// Percorso per eliminare un messaggio
+app.delete('/messages/:id', (req, res) => {
+    const messageId = req.params.id; // Otteniamo l'ID del messaggio da cancellare
+
+    fs.readFile('messages.json', 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Errore nella lettura dei messaggi');
+        }
+
+        const messages = JSON.parse(data); // Leggiamo i messaggi
+        const messageIndex = parseInt(messageId); // Convertiamo l'ID in numero intero
+
+        if (messageIndex >= 0 && messageIndex < messages.length) {
+            messages.splice(messageIndex, 1); // Rimuoviamo il messaggio dall'array
+
+            fs.writeFile('messages.json', JSON.stringify(messages, null, 2), (err) => {
+                if (err) {
+                    return res.status(500).send('Errore nel salvataggio dei messaggi');
+                }
+                res.status(200).send('Messaggio eliminato con successo');
+            });
+        } else {
+            res.status(404).send('Messaggio non trovato');
+        }
+    });
+});
+
+
