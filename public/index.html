@@ -47,7 +47,7 @@
 
 
 
-    <form id="messageForm">
+   <form id="messageForm">
   <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
   <button type="submit">Invia</button>
 </form>
@@ -58,9 +58,9 @@
     var message = document.getElementById("message").value;
     var url = "https://script.google.com/macros/s/AKfycbz5H-uNMKJPFCLCb6cJEoJRt32ASR8QfKwykbkoAx2w2uQmPO-a3LrwnA8xGy1mUK19/exec"; // URL dello script
 
-    // Usando FormData
+    // Usando FormData per inviare i dati
     var formData = new FormData();
-    formData.append("message", message);
+    formData.append("message", message);  // Assicurati che il nome del parametro sia corretto
 
     fetch(url, {
       method: "POST",
