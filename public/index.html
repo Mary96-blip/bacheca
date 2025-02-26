@@ -46,6 +46,7 @@
 <body>
 
 
+
     <form id="messageForm">
   <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
   <button type="submit">Invia</button>
@@ -55,12 +56,15 @@
   document.getElementById("messageForm").addEventListener("submit", function(e) {
     e.preventDefault();
     var message = document.getElementById("message").value;
-    var url = "https://script.google.com/macros/s/AKfycbz5H-uNMKJPFCLCb6cJEoJRt32ASR8QfKwykbkoAx2w2uQmPO-a3LrwnA8xGy1mUK19/exec"; // Incolla l'URL generato da Google Apps Script
+    var url = "https://script.google.com/macros/s/AKfycbz5H-uNMKJPFCLCb6cJEoJRt32ASR8QfKwykbkoAx2w2uQmPO-a3LrwnA8xGy1mUK19/exec"; // URL dello script
+
+    // Usando FormData
+    var formData = new FormData();
+    formData.append("message", message);
 
     fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "message=" + encodeURIComponent(message)
+      body: formData
     })
     .then(response => response.text())
     .then(data => alert(data));
@@ -68,6 +72,8 @@
     document.getElementById("message").value = "";
   });
 </script>
+    
+ 
 
 
     
