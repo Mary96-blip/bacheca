@@ -47,7 +47,30 @@
 
 
 
+<form id="messageForm">
+  <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
+  <button type="submit">Invia</button>
+</form>
 
+<script>
+  document.getElementById("messageForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    
+    var message = document.getElementById("message").value;
+    var telegramToken = "YOUR_TELEGRAM_BOT_TOKEN";  // Sostituisci con il token del bot
+    var chatId = "YOUR_CHAT_ID";  // Sostituisci con il tuo ID Telegram
+    var url = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.ok) alert("Messaggio inviato su Telegram!");
+      else alert("Errore nell'invio.");
+    });
+
+    document.getElementById("message").value = "";
+  });
+</script>
 
     <!DOCTYPE html>
 <html>
