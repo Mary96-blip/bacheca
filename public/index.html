@@ -3,214 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacheca Messaggi - lasciami un msg</title>
+    <title>Bacheca Messaggi</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #e0e0e0;
+            margin: 0;
+            padding: 0;
         }
 
-        #messages {
-            width: 50%;
-            margin: auto;
-            background: #f4f4f4;
-            padding: 10px;
-        }
-
-       .message {
-  border: 5px dashed pink;
-  padding: 15px;
-  background: #fffaf3;
-  box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
-}
-     
-
-        #messageInput {
-            width: 100%;
+        .container {
             max-width: 500px;
-            margin-bottom: 10px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        @media (max-width: 600px) {
-            #messageInput {
-                width: 80%;
-                max-width: 80%;
-            }
+        h1 {
+            color: #333;
+        }
 
-            #messages {
-                width: 90%;
-            }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            resize: none;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .letter {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            width: 300px;
+            height: 200px;
+            background: #fff;
+            border: 2px solid #333;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .letter.open {
+            transform: translate(-50%, -50%) scale(1);
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Lasciami un Messaggio 📩</h1>
+        <p>Scrivimi qualcosa di speciale, lo leggerò solo io!</p>
+        <form id="messageForm">
+            <textarea id="message" placeholder="Scrivi qui il tuo messaggio..." required></textarea>
+            <button type="submit">Invia</button>
+        </form>
+    </div>
 
-
-
-<form id="messageForm">
-  <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
-  <button type="submit">Invia</button>
-</form>
-
-<script>
-  document.getElementById("messageForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    
-    var message = document.getElementById("message").value;
-    var telegramToken = "7878005150:AAGBZZ96Tn0PLP2-Pk34IMS6sX0E0VceyQ4";  // Sostituisci con il token del bot
-    var chatId = "7635451210";  // Sostituisci con il tuo ID Telegram
-    var url = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data.ok) alert("Messaggio inviato su Telegram!");
-      else alert("Errore nell'invio.");
-    });
-
-    document.getElementById("message").value = "";
-  });
-</script>
-
-    <!DOCTYPE html>
-<html>
-<head>
-    <title>Messaggi Segreti</title>
-    <style>
-        textarea { width: 100%; height: 100px; }
-        button { margin-top: 10px; }
-        #messages { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
-    </style>
-</head>
-<body>
-    <h2>Lascia un messaggio</h2>
-    <form id="messageForm">
-        <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
-        <button type="submit">Invia</button>
-    </form>
-
-    <h3>Messaggi ricevuti:</h3>
-    <div id="messages">Caricamento...</div>
+    <div class="letter" id="letter">
+        ✉️ Messaggio inviato con successo! 💌
+    </div>
 
     <script>
-        const API_URL = "https://api.jsonbin.io/v3/b/67bf288fe41b4d34e49d0b2c";  // Sostituisci con il tuo JSONBin URL
-
-        async function loadMessages() {
-            let response = await fetch(API_URL);
-            let data = await response.json();
-            document.getElementById("messages").innerHTML = data.messages.map(m => `<p>${m}</p>`).join("");
-        }
-
-        document.getElementById("messageForm").addEventListener("submit", async function(e) {
+        document.getElementById("messageForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            let message = document.getElementById("message").value;
+            
+            var message = document.getElementById("message").value;
+            var telegramToken = "TUO_BOT_TOKEN";  // Sostituisci con il token del bot
+            var chatId = "TUO_CHAT_ID";  // Sostituisci con il tuo ID Telegram
+            var url = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
-            // Recupera i messaggi esistenti
-            let response = await fetch(API_URL);
-            let data = await response.json();
-            data.messages.push(message);
-
-            // Aggiorna il JSONBin con il nuovo messaggio
-            await fetch(API_URL, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    document.getElementById("letter").style.display = "block";
+                    setTimeout(() => {
+                        document.getElementById("letter").classList.add("open");
+                    }, 100);
+                } else {
+                    alert("Errore nell'invio. Riprova!");
+                }
             });
 
             document.getElementById("message").value = "";
-            loadMessages();
         });
-
-        // Carica i messaggi al caricamento della pagina
-        loadMessages();
     </script>
-</body>
-</html>
-
-   <form id="messageForm">
-  <textarea id="message" placeholder="Scrivi un messaggio..." required></textarea>
-  <button type="submit">Invia</button>
-</form>
-
-<script>
-  document.getElementById("messageForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    var message = document.getElementById("message").value;
-    var url = "https://script.google.com/macros/s/AKfycbz5H-uNMKJPFCLCb6cJEoJRt32ASR8QfKwykbkoAx2w2uQmPO-a3LrwnA8xGy1mUK19/exec"; // URL dello script
-
-    // Usando FormData per inviare i dati
-    var formData = new FormData();
-    formData.append("message", message);  // Assicurati che il nome del parametro sia corretto
-
-    fetch(url, {
-      method: "POST",
-      body: formData
-    })
-    .then(response => response.text())
-    .then(data => alert(data));
-
-    document.getElementById("message").value = "";
-  });
-</script>
-    
- 
-
-
-    
-    <h2>lasciami un msg</h2>
-    <textarea id="messageInput" rows="4" cols="50" placeholder="Scrivimi xxx..."></textarea><br>
-    <button onclick="sendMessage()">Invia</button>
-
-    <div id="messages"></div>
-
-    <script>
-        // Simuliamo un database di messaggi
-        let messages = [];
-        const adminUser = "admin";
-        let currentUser = ""; // Simula un utente che inserisce il proprio nome
-
-        // Funzione per caricare i messaggi
-        function loadMessages() {
-            const messageContainer = document.getElementById("messages");
-            messageContainer.innerHTML = "";
-            messages.forEach((msg, index) => {
-                const messageElement = document.createElement("div");
-                messageElement.classList.add("message");
-                messageElement.innerHTML = `
-                    <span>${msg.username}: ${msg.text}</span>
-                    ${(msg.username === currentUser || currentUser === adminUser) ? `<button onclick="deleteMessage(${index})">Cancella</button>` : ''}
-                `;
-                messageContainer.appendChild(messageElement);
-            });
-        }
-
-        // Funzione per inviare un messaggio
-        async function sendMessage() {
-            const input = document.getElementById("messageInput").value;
-            if (!input.trim()) return;
-
-            if (!currentUser) {
-                currentUser = prompt("Inserisci il tuo nome:");
-            }
-
-            messages.push({ username: currentUser, text: input });  // Aggiungi il messaggio all'array
-            document.getElementById("messageInput").value = "";
-            loadMessages();
-        }
-
-        // Funzione per eliminare un messaggio
-        function deleteMessage(index) {
-            const msg = messages[index];
-            if (msg.username === currentUser || currentUser === adminUser) {
-                messages.splice(index, 1); // Rimuovi il messaggio dall'array
-                loadMessages(); // Ricarica i messaggi
-            } else {
-                alert("Non hai i permessi per eliminare questo messaggio.");
-            }
-        }
-
-        loadMessages();
-    </script>
-
 </body>
 </html>
