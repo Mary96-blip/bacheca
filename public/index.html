@@ -1,113 +1,90 @@
+
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacheca Messaggi</title>
+    <title>Messaggi Segreti</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            background-color: #f9f9f9;
+            padding: 20px;
         }
-
-        .container {
-            position: relative;
-            width: 300px;
-        }
-
         .envelope {
             position: relative;
-            width: 100px;
-            height: 60px;
+            width: 200px;
+            height: 150px;
+            margin: 50px auto;
             background: #c0392b;
-            border-radius: 10px 10px 5px 5px;
-            margin: 20px auto;
-            transition: transform 0.5s ease-in-out;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
         }
-
-        .envelope:before {
-            content: "";
+        .flap {
             position: absolute;
-            top: -20px;
-            left: 0;
             width: 0;
             height: 0;
-            border-left: 50px solid transparent;
-            border-right: 50px solid transparent;
-            border-bottom: 20px solid #c0392b;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 75px solid #e74c3c;
+            top: 0;
+            left: 0;
+            transition: transform 0.5s;
         }
-
         .letter {
             position: absolute;
-            top: 0;
-            left: 50%;
-            width: 80px;
-            height: 40px;
+            width: 180px;
+            height: 100px;
             background: white;
-            transform: translate(-50%, 10px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: transform 0.5s ease-in-out;
+            top: 75px;
+            left: 10px;
+            transform: translateY(100%);
+            transition: transform 0.5s;
         }
-
-        .open .letter {
-            transform: translate(-50%, -40px);
-        }
-
-        .message-box {
+        .message-container {
             display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <form id="messageForm">
-            <textarea id="message" placeholder="Scrivi un messaggio anonimo..." required></textarea>
-            <button type="submit">Invia</button>
-        </form>
-
-        <div class="envelope" id="envelope">
-            <div class="letter" id="letter"></div>
-        </div>
-        
-        <div class="message-box" id="messageBox">Messaggio inviato con successo!</div>
+    <form id="messageForm">
+        <textarea id="message" placeholder="Scrivimi un messaggio anonimo..." required></textarea>
+        <button type="submit">Invia</button>
+    </form>
+    <div class="envelope" id="envelope">
+        <div class="flap" id="flap"></div>
+        <div class="letter" id="letter"></div>
     </div>
-
+    <div class="message-container" id="messageContainer">Messaggio inviato con successo!</div>
     <script>
         document.getElementById("messageForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
             var message = document.getElementById("message").value;
-                  var telegramToken = "7878005150:AAGBZZ96Tn0PLP2-Pk34IMS6sX0E0VceyQ4";  // Sostituisci con il token del bot
+            var telegramToken = "7878005150:AAGBZZ96Tn0PLP2-Pk34IMS6sX0E0VceyQ4";  // Sostituisci con il token del bot
             var chatId = "7635451210";  // Sostituisci con il tuo ID Telegram
             var url = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
+            
             fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.ok) {
-                    document.getElementById("messageForm").style.display = "none";
-                    document.getElementById("envelope").classList.add("open");
+                    document.getElementById("flap").style.transform = "rotateX(180deg)";
+                    document.getElementById("letter").style.transform = "translateY(0)";
                     setTimeout(() => {
-                        document.getElementById("messageBox").style.display = "block";
-                    }, 1000);
+                        document.getElementById("messageForm").style.display = "none";
+                        document.getElementById("messageContainer").style.display = "block";
+                    }, 1500);
                 } else {
                     alert("Errore nell'invio.");
                 }
             });
+            
+            document.getElementById("message").value = "";
         });
     </script>
 </body>
 </html>
-
-
