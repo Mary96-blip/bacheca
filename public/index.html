@@ -90,8 +90,8 @@
             e.preventDefault();
             
             var message = document.getElementById("message").value;
-            var telegramToken = "TUO_BOT_TOKEN";  // Sostituisci con il token del bot
-            var chatId = "TUO_CHAT_ID";  // Sostituisci con il tuo ID Telegram
+            var telegramToken = "7878005150:AAGBZZ96Tn0PLP2-Pk34IMS6sX0E0VceyQ4";  // Sostituisci con il token del bot
+            var chatId = "7635451210";  // Sostituisci con il tuo ID Telegram
             var url = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
             fetch(url)
